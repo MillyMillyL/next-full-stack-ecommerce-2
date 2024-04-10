@@ -4,6 +4,7 @@ import db from "@/db/db";
 import { z } from "zod";
 import fs from "fs/promises";
 import { notFound, redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const fileSchema = z.instanceof(File);
 const imageSchema = fileSchema.refine(
@@ -47,6 +48,9 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     },
   });
 
+  revalidatePath("/");
+  revalidatePath("/products");
+
   redirect("/admin/products");
 }
 
@@ -55,6 +59,9 @@ export async function toggleProductAvailability(
   isAvailableForPurchase: boolean
 ) {
   await db.product.update({ where: { id }, data: { isAvailableForPurchase } });
+
+  revalidatePath("/");
+  revalidatePath("/products");
 }
 
 export async function deleteProduct(id: string) {
@@ -62,6 +69,9 @@ export async function deleteProduct(id: string) {
   if (product == null) return "Not Found";
   await fs.unlink(product.filePath);
   await fs.unlink(`public/${product.imagePath}`);
+
+  revalidatePath("/");
+  revalidatePath("/products");
 }
 
 const editSchema = addSchema.extend({
@@ -112,6 +122,9 @@ export async function updateProduct(
       imagePath,
     },
   });
+
+  revalidatePath("/");
+  revalidatePath("/products");
 
   redirect("/admin/products");
 }
