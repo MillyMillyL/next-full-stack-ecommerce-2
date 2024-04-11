@@ -7,6 +7,6 @@ export async function userOrderExists(email: string, productId: string) {
     where: { user: { email }, productId },
     select: { id: true },
   });
-  console.log(order);
+
   return order != null;
 }
