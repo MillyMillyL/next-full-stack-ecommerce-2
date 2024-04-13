@@ -85,12 +85,15 @@ function Form({ priceInCents, productId }: FormPropsType) {
       return;
     }
 
+    console.log(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`
+    );
+
     stripe
       .confirmPayment({
         elements,
         confirmParams: {
-          return_url:
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success` as string,
+          return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
         },
       })
       .then(({ error }) => {

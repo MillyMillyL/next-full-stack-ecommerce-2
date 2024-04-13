@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-import db from "@/db/db";
+import db from "../../../db/db";
 
-import { stripe } from "../(customerFacing)/products/[id]/purchase/page";
+import { stripe } from "../../(customerFacing)/products/[id]/purchase/page";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(req: NextRequest) {
+export default async function POST(req: NextRequest) {
   const event = stripe.webhooks.constructEvent(
     await req.text(),
     req.headers.get("stripe-signature") as string,
     process.env.STRIPE_WEBHOOK_SECRET as string
   );
-
-  console.log(event.type, "event type");
 
   if (event.type === "charge.succeeded") {
     const charge = event.data.object;
@@ -23,6 +21,7 @@ export async function POST(req: NextRequest) {
     const pricePaidInCents = charge.amount;
 
     const product = await db.product.findUnique({ where: { id: productId } });
+    console.log(product, "webhoot stripe product");
 
     if (product == null || email == null)
       return new NextResponse("Bad Request", { status: 400 });
@@ -56,5 +55,5 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  return new NextResponse();
+  return new NextResponse("End");
 }

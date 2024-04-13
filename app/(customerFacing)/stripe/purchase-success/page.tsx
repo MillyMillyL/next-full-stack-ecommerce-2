@@ -14,10 +14,12 @@ export default async function SuccessPage({
   const paymentIntent = await stripe.paymentIntents.retrieve(
     searchParams.payment_intent
   );
+
   if (paymentIntent.metadata.productId == null) return notFound();
   const product = await db.product.findUnique({
     where: { id: paymentIntent.metadata.productId },
   });
+
   if (product == null) return notFound();
 
   const isSuccess = paymentIntent.status === "succeeded";

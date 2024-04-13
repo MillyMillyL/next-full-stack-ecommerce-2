@@ -1,16 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { deleteUser } from "../../_actions/users";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
-export function DeleteDropdownItem({
-  id,
-  disabled,
-}: {
-  id: string;
-  disabled: boolean;
-}) {
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { deleteOrder } from "../../_actions/orders";
+
+export function DeleteDropdownItem({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   return (
@@ -18,11 +13,10 @@ export function DeleteDropdownItem({
       variant="destructive"
       onClick={() =>
         startTransition(async () => {
-          await deleteUser(id);
+          await deleteOrder(id);
           router.refresh();
         })
       }
-      disabled={disabled || isPending}
     >
       Delete
     </DropdownMenuItem>

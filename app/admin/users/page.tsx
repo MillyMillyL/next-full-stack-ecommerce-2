@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
-import { DeleteDropdownItem } from "../products/_components/ProductActions";
+import { DeleteDropdownItem } from "./_components/UserActions";
 
 function getUsers() {
   return db.user.findMany({
@@ -75,7 +75,10 @@ async function UsersTable() {
                   <span className="sr-only">Actions</span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DeleteDropdownItem id={user.id} />
+                  <DeleteDropdownItem
+                    id={user.id}
+                    disabled={user.orders.length > 0}
+                  />
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
